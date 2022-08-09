@@ -66,8 +66,8 @@ var beepbox = (function (exports) {
         { name: "B", isWhiteKey: true, basePitch: 23 },
     ]);
     Config.blackKeyNameParents = [-1, 1, -1, 1, -1, 1, -1, -1, 1, -1, 1, -1];
-    Config.tempoMin = 30;
-    Config.tempoMax = 320;
+    Config.tempoMin = 0;
+    Config.tempoMax = Math.pow(10, 4);
     Config.echoDelayRange = 24;
     Config.echoDelayStepTicks = 4;
     Config.echoSustainRange = 8;
@@ -81,10 +81,10 @@ var beepbox = (function (exports) {
     Config.beatsPerBarMin = 3;
     Config.beatsPerBarMax = 16;
     Config.barCountMin = 1;
-    Config.barCountMax = 256;
+    Config.barCountMax = 2000;
     Config.instrumentCountMin = 1;
     Config.layeredInstrumentCountMax = 4;
-    Config.patternInstrumentCountMax = 10;
+    Config.patternInstrumentCountMax = 100;
     Config.partsPerBeat = 24;
     Config.ticksPerPart = 2;
     Config.ticksPerArpeggio = 3;
@@ -27055,8 +27055,8 @@ You should be redirected to the song at:<br /><br />
             this._optionsMenu = select$6({ style: "width: 100%;" }, option$6({ selected: true, disabled: true, hidden: false }, "Preferences"), option$6({ value: "autoPlay" }, "Auto Play On Load"), option$6({ value: "autoFollow" }, "Auto Follow Track"), option$6({ value: "enableNotePreview" }, "Preview Added Notes"), option$6({ value: "showLetters" }, "Show Piano Keys"), option$6({ value: "showFifth" }, 'Highlight "Fifth" Notes'), option$6({ value: "notesOutsideScale" }, "Allow Notes Outside Scale"), option$6({ value: "setDefaultScale" }, "Use Current Scale as Default"), option$6({ value: "showChannels" }, "Show All Channels"), option$6({ value: "showScrollBar" }, "Octave Scroll Bar"), option$6({ value: "alwaysFineNoteVol" }, "Always Fine Note Vol."), option$6({ value: "enableChannelMuting" }, "Enable Channel Muting"), option$6({ value: "displayBrowserUrl" }, "Display Song Data in URL"), option$6({ value: "displayVolumeBar" }, "Show Playback Volume"), option$6({ value: "layout" }, "Set Layout..."), option$6({ value: "colorTheme" }, "Set Theme..."));
             this._scaleSelect = buildOptions(select$6(), Config.scales.map(scale => scale.name));
             this._keySelect = buildOptions(select$6(), Config.keys.map(key => key.name).reverse());
-            this._tempoSlider = new Slider(input$8({ style: "margin: 0; vertical-align: middle;", type: "range", min: "30", max: "320", value: "160", step: "1" }), this._doc, (oldValue, newValue) => new ChangeTempo(this._doc, oldValue, newValue), false);
-            this._tempoStepper = input$8({ style: "width: 4em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", type: "number", step: "1" });
+            //this._tempoSlider = new Slider(input$8({ style: "margin: 0; vertical-align: middle;", type: "range", min: Config.tempoMin.toString(), max: Config.tempoMax.toString(), value: "160", step: "0.01" }), this._doc, (oldValue, newValue) => new ChangeTempo(this._doc, oldValue, newValue), false);
+            this._tempoStepper = input$8({ style: "width: 10em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", type: "number", step: "1" });
             this._chorusSlider = new Slider(input$8({ style: "margin: 0;", type: "range", min: "0", max: Config.chorusRange - 1, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeChorus(this._doc, oldValue, newValue), false);
             this._chorusRow = div$d({ class: "selectRow" }, span$4({ class: "tip", onclick: () => this._openPrompt("chorus") }, "Chorus:"), this._chorusSlider.container);
             this._reverbSlider = new Slider(input$8({ style: "margin: 0; position: sticky,", type: "range", min: "0", max: Config.reverbRange - 1, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeReverb(this._doc, oldValue, newValue), false);
@@ -27219,7 +27219,7 @@ You should be redirected to the song at:<br /><br />
             this._barScrollBar = new BarScrollBar(this._doc, this._trackAndMuteContainer);
             this._trackArea = div$d({ class: "track-area" }, this._trackAndMuteContainer, this._barScrollBar.container);
             this._instrumentSettingsArea = div$d({ class: "instrument-settings-area" }, this._instrumentSettingsGroup, this._modulatorGroup);
-            this._settingsArea = div$d({ class: "settings-area noSelection" }, div$d({ class: "version-area" }, div$d({ style: `text-align: center; margin: 3px 0; color: ${ColorConfig.secondaryText};` }, this._songTitleInputBox.input)), div$d({ class: "play-pause-area" }, this._volumeBarBox, div$d({ class: "playback-bar-controls" }, this._playButton, this._prevBarButton, this._nextBarButton), div$d({ class: "playback-volume-controls" }, span$4({ class: "volume-speaker" }), this._volumeSlider.container)), div$d({ class: "menu-area" }, div$d({ class: "selectContainer menu file" }, this._fileMenu), div$d({ class: "selectContainer menu edit" }, this._editMenu), div$d({ class: "selectContainer menu preferences" }, this._optionsMenu)), div$d({ class: "song-settings-area" }, div$d({ class: "editor-controls" }, div$d({ class: "editor-song-settings" }, div$d({ style: "margin: 3px 0; position: relative; text-align: center; color: ${ColorConfig.secondaryText};" }, div$d({ class: "tip", style: "flex-shrink: 0; position:absolute; left: 0; top: 0; width: 12px; height: 12px", onclick: () => this._openPrompt("usedPattern") }, SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 0; pointer-events: none;", width: "12px", height: "12px", "margin-right": "0.5em", viewBox: "-6 -6 12 12" }, this._usedPatternIndicator)), div$d({ class: "tip", style: "flex-shrink: 0; position: absolute; left: 14px; top: 0; width: 12px; height: 12px", onclick: () => this._openPrompt("usedInstrument") }, SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 0; pointer-events: none;", width: "12px", height: "12px", "margin-right": "1em", viewBox: "-6 -6 12 12" }, this._usedInstrumentIndicator)), "Song Settings", div$d({ style: "width: 100%; left: 0; top: -1px; position:absolute; overflow-x:clip;" }, this._jumpToModIndicator))), div$d({ class: "selectRow" }, span$4({ class: "tip", onclick: () => this._openPrompt("scale") }, "Scale: "), div$d({ class: "selectContainer" }, this._scaleSelect)), div$d({ class: "selectRow" }, span$4({ class: "tip", onclick: () => this._openPrompt("key") }, "Key: "), div$d({ class: "selectContainer" }, this._keySelect)), div$d({ class: "selectRow" }, span$4({ class: "tip", onclick: () => this._openPrompt("tempo") }, "Tempo: "), span$4({ style: "display: flex;" }, this._tempoSlider.container, this._tempoStepper)), div$d({ class: "selectRow" }, span$4({ class: "tip", onclick: () => this._openPrompt("rhythm") }, "Rhythm: "), div$d({ class: "selectContainer" }, this._rhythmSelect)))), this._instrumentSettingsArea);
+            this._settingsArea = div$d({ class: "settings-area noSelection" }, div$d({ class: "version-area" }, div$d({ style: `text-align: center; margin: 3px 0; color: ${ColorConfig.secondaryText};` }, this._songTitleInputBox.input)), div$d({ class: "play-pause-area" }, this._volumeBarBox, div$d({ class: "playback-bar-controls" }, this._playButton, this._prevBarButton, this._nextBarButton), div$d({ class: "playback-volume-controls" }, span$4({ class: "volume-speaker" }), this._volumeSlider.container)), div$d({ class: "menu-area" }, div$d({ class: "selectContainer menu file" }, this._fileMenu), div$d({ class: "selectContainer menu edit" }, this._editMenu), div$d({ class: "selectContainer menu preferences" }, this._optionsMenu)), div$d({ class: "song-settings-area" }, div$d({ class: "editor-controls" }, div$d({ class: "editor-song-settings" }, div$d({ style: "margin: 3px 0; position: relative; text-align: center; color: ${ColorConfig.secondaryText};" }, div$d({ class: "tip", style: "flex-shrink: 0; position:absolute; left: 0; top: 0; width: 12px; height: 12px", onclick: () => this._openPrompt("usedPattern") }, SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 0; pointer-events: none;", width: "12px", height: "12px", "margin-right": "0.5em", viewBox: "-6 -6 12 12" }, this._usedPatternIndicator)), div$d({ class: "tip", style: "flex-shrink: 0; position: absolute; left: 14px; top: 0; width: 12px; height: 12px", onclick: () => this._openPrompt("usedInstrument") }, SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 0; pointer-events: none;", width: "12px", height: "12px", "margin-right": "1em", viewBox: "-6 -6 12 12" }, this._usedInstrumentIndicator)), "Song Settings", div$d({ style: "width: 100%; left: 0; top: -1px; position:absolute; overflow-x:clip;" }, this._jumpToModIndicator))), div$d({ class: "selectRow" }, span$4({ class: "tip", onclick: () => this._openPrompt("scale") }, "Scale: "), div$d({ class: "selectContainer" }, this._scaleSelect)), div$d({ class: "selectRow" }, span$4({ class: "tip", onclick: () => this._openPrompt("key") }, "Key: "), div$d({ class: "selectContainer" }, this._keySelect)), div$d({ class: "selectRow" }, span$4({ class: "tip", onclick: () => this._openPrompt("tempo") }, "Tempo: "), span$4({ style: "display: flex;" }, '', this._tempoStepper)), div$d({ class: "selectRow" }, span$4({ class: "tip", onclick: () => this._openPrompt("rhythm") }, "Rhythm: "), div$d({ class: "selectContainer" }, this._rhythmSelect)))), this._instrumentSettingsArea);
             this.mainLayer = div$d({ class: "beepboxEditor", tabIndex: "0" }, this._patternArea, this._trackArea, this._settingsArea, this._promptContainer);
             this._wasPlaying = false;
             this._currentPromptName = null;
@@ -27354,7 +27354,7 @@ You should be redirected to the song at:<br /><br />
                 setSelectedValue(this._scaleSelect, this._doc.song.scale);
                 this._scaleSelect.title = Config.scales[this._doc.song.scale].realName;
                 setSelectedValue(this._keySelect, Config.keys.length - 1 - this._doc.song.key);
-                this._tempoSlider.updateValue(Math.max(0, Math.round(this._doc.song.tempo)));
+                //this._tempoSlider.updateValue(Math.max(0, Math.round(this._doc.song.tempo)));
                 this._tempoStepper.value = Math.round(this._doc.song.tempo).toString();
                 this._songTitleInputBox.updateValue(this._doc.song.title);
                 this._eqFilterTypeRow.style.setProperty("--text-color-lit", colors.primaryNote);
@@ -29310,7 +29310,7 @@ You should be redirected to the song at:<br /><br />
                 case Config.modulators.dictionary["pan delay"].index:
                     return this._panDelaySlider;
                 case Config.modulators.dictionary["tempo"].index:
-                    return this._tempoSlider;
+                    return ' ';
                 case Config.modulators.dictionary["song volume"].index:
                     return this._volumeSlider;
                 case Config.modulators.dictionary["eq filt cut"].index:
